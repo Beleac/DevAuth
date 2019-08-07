@@ -1,4 +1,5 @@
 const mongoose= require('mongoose');
+const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
     email: {
@@ -32,7 +33,8 @@ const UserSchema = new mongoose.Schema({
 UserSchema.methods.generateAuthToken = async function() {
     let user = this;
     let access = 'auth';
-    let token = 'MeatballSub';
+    let token = jwt.sign({_id: user._id.toHexString(), access}, 'T%MF_<__^YTOMH').toString;
+
 
 
     user.tokens = user.tokens.concat([{ access, token}]);
