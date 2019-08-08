@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        minlength: 6,
+        minlength: 5,
         unique: true
     },
     password: {
@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema({
 UserSchema.methods.generateAuthToken = async function() {
     let user = this;
     let access = 'auth';
-    let token = jwt.sign({_id: user._id.toHexString(), access}, 'T%MF_<__^YTOMH').toString;
+    let token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
 
 
 
@@ -58,6 +58,7 @@ UserSchema.statics.findByCredentials = async function(email, password) {
 
     }   catch (err) {
         return Promise.reject(err);
+        console.log(err)
     }
 
 }
@@ -66,7 +67,7 @@ var User = mongoose.model('User', UserSchema);
 
 
 
-// module.exports = User;
+module.exports = User;
 
 
 
@@ -145,4 +146,6 @@ var User = mongoose.model('User', UserSchema);
 
 
 
-console.log(`"I don't want to try" - Zeeshan 8/7/19 10:39`)
+
+
+console.log(`"Go die in a hole" - Zeeshan 8/8/19 9:51`)

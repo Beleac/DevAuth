@@ -62,7 +62,8 @@ app.post('/users/login', async (req, res) => {
     
     res.status(200).header('x-auth', createdToken).send(user);
     } catch (err) {
-        res.status(404).send({errorMsg: err})
+        res.status(401).send({errorMsg: err})
+        console.log(err)
     }
 
     })
