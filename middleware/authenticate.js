@@ -14,15 +14,25 @@ const authenticate = async(req, res, next) => {
         req.user = foundUser;
         req.token = token;
 
-        console.log('Access Granted -- Enjoy Your Stay')
         next();
+        console.log('Access Granted -- Enjoy Your Stay')
     }
-    catch
+    catch(err)
     {
+        res.status(401).send({ error: 'Authentication Failed. Leave or be Destroyed'})
         console.log('Access Denied -- Leave Country Immediately')
-        res.status(404).send({ error: 'Authentication Failed. Leave or be Destroyed'})
+        console.log(err)
     }
 
 }
 
     module.exports = authenticate;
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+
+
