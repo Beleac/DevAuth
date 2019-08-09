@@ -6,8 +6,10 @@ const
     app = express(),
     bodyParser = require('body-parser'),
     path = require('path'),
+    bcrypt = require('bcryptjs'),
     User = require('./models/user'),
     authenticate = require('./middleware/authenticate')
+
     PORT = process.env.PORT || 3000;
 
 // Connect database
@@ -54,10 +56,10 @@ require('./db/mongoose');
 //USER LOGIN Route
 app.post('/users/login', async (req, res) => {
 
-    console.log(`Finding Dory`);
+    console.log(`Finding Nemo`);
     try {
     const user = await User.findByCredentials(req.body.email, req.body.password);
-
+    console.log(`userFound: ${user}`)
     const createdToken = await user.generateAuthToken();
     
     res.status(200).header('x-auth', createdToken).send(user);
@@ -74,7 +76,7 @@ app.post('/users/login', async (req, res) => {
     });
 
 
-// Listening on Port
+// Listening on Ports
 app.listen(PORT, err => {
     console.log( err || `Server listening on PORT ${PORT}`)
 });

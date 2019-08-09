@@ -1,5 +1,6 @@
 const mongoose= require('mongoose');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
     email: {
@@ -12,7 +13,7 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         require: true,
-        minlength: 6
+        minlength: 5
     },
     tokens: [{
         access: {
@@ -80,20 +81,56 @@ UserSchema.statics.findByCredentials = async function(email, password) {
 
     let User = this;
 
+    try {
+        const foundUser = await User.findOne({email});
 
-    try {const foundUser = await User.findOne({ email: email, password: password});
+    if(!foundUser)
+    {
+        return Promise.reject();
+    }
+    
+    const matchedPassword = await foundUser.comparePassword(password);
+    console.log(`matchedPassword: ${matchedPassword}`);
+    console.log(`foundUser: ${foundUser}`);
+    return Promise.resolve(foundUser) 
 
-        if(!foundUser) {
-            return Promise.reject();
-        }
-        return Promise.resolve(foundUser)
+    }
 
-    }   catch (err) {
+    catch (err) {
         return Promise.reject(err);
         console.log(err)
     }
 
 }
+
+UserSchema.methods.comparePassword = async function(password) {
+    const match = await bcrypt.compare(password, this.password);
+    if(!match) 
+    {
+        console.log('Password is invalid')
+        return Promise.reject
+    } 
+    console.log(`comparePassword match is: ${match}`)
+    console.log('Password is a match.')
+    return Promise.resolve(match);
+}
+
+UserSchema.pre('save', function(next) {
+    let user = this;
+    if(user.isModified('password'))
+    {
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(user.password, salt, (err, hash) => {
+                user.password = hash
+                next();
+            })
+        });
+    }
+    else
+    {
+        next();
+    }
+})
 
 var User = mongoose.model('User', UserSchema);
 
@@ -180,4 +217,4 @@ module.exports = User;
 
 
 
-console.log(`"Go die in a hole" - Zeeshan 8/8/19 9:51`)
+console.log(`"No, go die anwhere, not just in a hole" - Zeeshan 8/9/19 9:56`)
